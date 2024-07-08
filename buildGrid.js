@@ -1,7 +1,3 @@
-import { translate } from "./common.js";
-
-export const grid_replace_regex = /\|grid(\!|\?)*\|([^|]+)\|([^|]+)\|([^|]+)\|([^|]+)\|/g;
-
 //NOTE: This function is not used in the current implementation
 export function firstFun(event) {
   event.preventDefault();
@@ -55,7 +51,7 @@ function grid_text_displayif(original_text){
 }
 
 // Builds the HTML Table for a grid question (radio-selectable multi-option fields).
-function buildHtmlTable(grid_obj){
+function buildHtmlTable(grid_obj, button_text_obj){
   // is there a hard/soft edit?
   let gridPrompt = "hardedit='false' softedit='false'";
   if (grid_obj.prompt) {
@@ -114,17 +110,18 @@ function buildHtmlTable(grid_obj){
     grid_html += `</tr>`;
   });
   
+  // TODO: The buttons can be attached to the parent div or the question. They don't need to be repeated in the question DOM (Caveat: renderer in question list format).
   grid_html += `</tbody></table>
     <div class="container">
       <div class="row">
         <div class="col-md-3 col-sm-12">
-          <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">${translate("backButton")}</button>
+          <button type="submit" class="previous w-100" aria-label="Back to the previous section" data-click-type="previous">${button_text_obj.back}</button>
         </div>
         <div class="col-md-6 col-sm-12">
-          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">${translate("resetAnswerButton")}</button>
+          <button type="submit" class="reset w-100" aria-label="Reset answer for this question" data-click-type="reset">${button_text_obj.reset}</button>
         </div>
         <div class="col-md-3 col-sm-12">
-          <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">${translate("nextButton")}</button>
+          <button type="submit" class="next w-100" aria-label="Go to the next section" data-click-type="next">${button_text_obj.next}</button>
         </div>
       </div>
     </div>
@@ -136,7 +133,8 @@ function buildHtmlTable(grid_obj){
 // note the text should contain the entirity of ONE grid!
 // the regex for a grid is /\|grid\|([^|]*?)\|([^|]*?)\|([^|]*?)\|
 // you  can use the /g and then pass it to the function one at a time...
-export function parseGrid(text) {
+export function parseGrid(text, ...args) {
+  const button_text_obj = args.pop();
   let grid_obj = {};
   //  look for key elements of the text
   // |grid|id=xxx|shared_text|questions|response|
@@ -159,7 +157,7 @@ export function parseGrid(text) {
     grid_obj.args = grid_obj.args.replace(args_regex,(match,group1)=>{
       return `displayif=${encodeURIComponent(group1)}`
     })
-    console.log(grid_obj.args) 
+    //console.log(grid_obj.args) 
 
     //let question_regex = /\[([A-Z][A-Z0-9_]*)\](.*?);\s*(?=[\[\]])/g;     
     let question_regex = /\[([A-Z][A-Z0-9_]*)(,displayif=[^\]]+)?\](.*?)[;\]]/g;
@@ -194,5 +192,5 @@ export function parseGrid(text) {
       }
     }
   }
-  return buildHtmlTable(grid_obj);
+  return buildHtmlTable(grid_obj, button_text_obj);
 }
