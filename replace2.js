@@ -43,21 +43,15 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   if (obj.text) contents = obj.text;
 
-  // TODO: should these stylesheets have local refs instead (pulled from the CDN instead of the GitHub repo)?
   if (obj.url) {
     contents = await (await fetch(obj.url)).text();
-    moduleParams.config = contents
-    if (obj.activate) {
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = "https://episphere.github.io/quest/ActiveLogic.css";
-      document.head.appendChild(link);
-      const link2 = document.createElement("link");
-      link2.rel = "stylesheet";
-      link2.href = "https://episphere.github.io/quest/Style1.css";
-      document.head.appendChild(link2);
-    }
+    moduleParams.config = contents;
   }
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = "css/style.css";
+  document.head.appendChild(link);
   
   // Define the Date prototype function toQuestFormat
   Date.prototype.toQuestFormat = function () { return `${this.getFullYear()}-${this.getMonth() + 1}-${this.getDate()}` }
