@@ -50,7 +50,7 @@ transform.render = async (obj, divId, previousResults = {}) => {
 
   const link = document.createElement("link");
   link.rel = "stylesheet";
-  link.href = "css/style.css";
+  link.href = "https://episphere.github.io/quest2-dev/style.css";
   document.head.appendChild(link);
   
   // Define the Date prototype function toQuestFormat
